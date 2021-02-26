@@ -18,10 +18,6 @@ if(!$db->connect())exit();
     {
     ?>
     <h1>Approve or Delete</h1>
-    <form action="approveDelete.php" method="GET">
-    <input type="text"><br><br>
-    <button>Search</button>
-    </form>
     <?php
     }
     else header('Location: index.php');
