@@ -13,6 +13,14 @@ if(!$db->connect())exit();
     <title>Investing</title>
 </head>
 <body>
+    <?php
+    if (isset($_SESSION['id']) and isset($_SESSION['status']) and isset($_SESSION['username']) and $_SESSION['status']=='owner')
+    {
+    ?>
     <h1>Approve or Delete</h1>
+<?php
+    }
+    else header('Location: index.php');
+?>
 </body>
 </html>
