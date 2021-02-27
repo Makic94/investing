@@ -89,7 +89,10 @@ if(!$db->connect())exit();
                                     }
                                 echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
                                 echo "</div>";
-                            }
+                                echo "<p></p>";
+                            } ?>
+                            <button>Approve</button> or <button>Delete</button>
+                            <?php
                 }
             else echo "<p>Unable to find the given news id.<p>";
             }
