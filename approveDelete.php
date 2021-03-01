@@ -133,3 +133,7 @@ if(!$db->connect())exit();
 ?>
 </body>
 </html>
+<?php
+}
+unset($db);
+?>
