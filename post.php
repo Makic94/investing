@@ -57,7 +57,7 @@ if(!$db->connect())exit();
                             $category=$_POST['category'];
                             $title=$_POST['title'];
                             $text=$_POST['text'];
-                            $name="server/".microtime(true).".".pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
+                            $name="tmpuserimages/".microtime(true).".".pathinfo($_FILES['upload']['name'], PATHINFO_EXTENSION);
                             $tmp=$_FILES['upload']['tmp_name'];
                             $error=$_FILES['upload']['error'];
                             $size=$_FILES['upload']['size'];
@@ -190,14 +190,14 @@ if(!$db->connect())exit();
                                                                                                 echo "<p>Your post has been successfully uploaded.</p>";
                                                                                             }
                                                                                     }
-                                                                                else echo "<p>Error while uploading the image on server.</p>";
+                                                                                else echo "<p>Error while uploading image on the server.</p>";
                                                                             }
-                                                                        else echo "<p>Image is should not be larger than 800x600 format.</p>";
+                                                                        else echo "<p>Image should not be larger than 800x600 format.</p>";
                                                                     }
                                                             }
                                                             else 
                                                             {
-                                                            echo "The file is not correct format. Supported formats are: ";
+                                                            echo "Uploaded file is not the correct format. Supported formats are: ";
                                                                 for($i=0;$i<count($formats);$i++)
                                                                     {
                                                                         echo $formats[$i]." ";
@@ -226,6 +226,5 @@ if(!$db->connect())exit();
 </body>
 </html>
 <?php
-}
 unset($db);
 ?>

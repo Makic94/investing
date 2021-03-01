@@ -30,7 +30,7 @@ if(!$db->connect())exit();
     <li><a href="logout.php">Logout</a></li>
     </ul>
     <hr>
-    <p>Selecet a news category you would like to see</p>
+    <p>Select a news category you would like to approve or delete</p>
     <form action="approveDelete.php" method="GET">
     <select name="category" id="category">
     <option value="0">Select a Category</option>
@@ -49,7 +49,7 @@ if(!$db->connect())exit();
                 if($_GET['category']!=0)
                 {
                     $category=$_GET['category'];
-                    $upit="SELECT * FROM vnews WHERE deleted=1 and category='$category'";
+                    $upit="SELECT * FROM vnews WHERE deleted=1 and category='$category' ORDER BY time DESC";
                     $rez=$db->query($upit);
                     while($red=$db->fetch_object($rez))
                     {
@@ -68,7 +68,7 @@ if(!$db->connect())exit();
                     }
 
                 }
-                else { echo "<p>You must select a category to view the news.</p>"; }
+               // else { echo "<p>You must select a category to view the news.</p>"; }
             }
             if(isset($_GET['id']))
             {
@@ -88,7 +88,9 @@ if(!$db->connect())exit();
                                 while($red2=$db->fetch_object($rez2))
                                     {
                                         $id=$red2->id;
-                                        setcookie("img",$id,time()+3600,"/"); //cookie created to transfer the image ID for the sql command (update/delete)
+                                        $path=$red2->path;
+                                        setcookie("path",$path,time()+3600,"/");  //cookie created to delete the image from tmpuserimages folder or to move it to the servers folder
+                                        setcookie("img",$id,time()+3600,"/"); //cookie created to transfer the image ID for the sql command (delete)
                                         echo "<img src={$red2->path} width='380' height='250'>";
                                     }
                                 echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
@@ -110,17 +112,31 @@ if(!$db->connect())exit();
                     if($_GET['radio']=='approve')
                         {
                             $upit="UPDATE news SET deleted=0 WHERE id={$_COOKIE['id']}";
-                            setcookie("id","",time()-60,"/");
-                            setcookie("img","",time()-60,"/");
                             $rez=$db->query($upit);
+                            $name=$_COOKIE['path'];
+                            $newname=str_replace("tmpuserimages/","server/","$name");
+                            $upit="UPDATE images SET path='$newname' WHERE id={$_COOKIE['img']}";
+                            $rez=$db->query($upit);
+                            if(!rename($name, $newname))
+                            {
+                                echo "<p>There was an error while moving the image to the server folder!</p>";
+                            }
+                            setcookie("path","",time()-60,"/");
+                            setcookie("img","",time()-60,"/");
+                            setcookie("id","",time()-60,"/");
                             echo "<p>Selected news are successfully approved!</p>";
                         }
                     else
                         {
                             $upit="DELETE FROM news WHERE id={$_COOKIE['id']}";
                             $rez=$db->query($upit);
+                            if(!unlink($_COOKIE['path']))
+                            {
+                                echo "<p>There was an error while deleting the image!</p>";
+                            }
                             $upit="DELETE FROM images WHERE id={$_COOKIE['img']}";
                             $rez=$db->query($upit);
+                            setcookie("path","",time()-60,"/");
                             setcookie("img","",time()-60,"/");
                             setcookie("id","",time()-60,"/");
                             echo "<p>Selected news are successfully deleted!</p>";
@@ -134,6 +150,5 @@ if(!$db->connect())exit();
 </body>
 </html>
 <?php
-}
 unset($db);
 ?>

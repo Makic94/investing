@@ -20,7 +20,7 @@ else
     <title>Investing</title>
 </head>
 <body>
-    <h1>Investing</h1>
+    <h1>Join Us</h1>
     <ul>
     <li><a href="index.php">Home</a></li>
     <li><a href="info.php">Info</a></li>

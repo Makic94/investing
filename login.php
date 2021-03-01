@@ -20,7 +20,7 @@ else
     <title>Investing</title>
 </head>
 <body>
-    <h1>Investing</h1>
+    <h1>Login</h1>
     <div id="click">
     <ul>
     <li><a href="index.php">Home</a></li>
@@ -32,7 +32,7 @@ else
     </ul>
     </div>
     <hr>
-    <h2>Login</h2>
+    <p>To login, type your email and password down bellow!</p>
     <form action="login.php" method="POST">
     <input type="email" name="email" id="email" placeholder="Email"
     autocomplete="off"><br><br>
@@ -48,10 +48,10 @@ else
                 }
             else echo "<p>All field are required.</p>";
         }
+    }
     ?>
 </body>
 </html>
 <?php
-}
 unset($db);
 ?>

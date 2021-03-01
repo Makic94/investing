@@ -65,7 +65,7 @@ if(!$db->connect())exit();
     }
     ?>
     <hr>
-    <p>Selecet a news category you would like to see</p>
+    <p>Select a news category you would like to see</p>
     <form action="news.php" method="GET">
     <select name="category" id="category">
     <option value="0">Select a Category</option>
@@ -86,7 +86,7 @@ if(!$db->connect())exit();
         if($_GET['category']!=0)
             {
                 $category=$_GET['category'];
-                    $upit="SELECT * FROM vnews WHERE deleted=0 and category='{$category}'";
+                    $upit="SELECT * FROM vnews WHERE deleted=0 and category='{$category}' ORDER BY time DESC";
                     $rez=$db->query($upit);
                     while($red=$db->fetch_object($rez))
                     {
