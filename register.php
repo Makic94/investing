@@ -1,9 +1,7 @@
 <?php
-require_once("class/classBase.php");
-require_once("functions/functions.php");
+require_once("class/classUser.php");
 session_start();
-$db=new Base();
-if(!$db->connect())exit();
+$user = new User();
 if(isset($_SESSION['username']) and isset($_SESSION['status']) and isset($_SESSION['id']))
 {
     header('Location: index.php');
@@ -52,7 +50,12 @@ else
         {
             if($_POST['email']!="" and $_POST['password']!="" and $_POST['username']!="" and $_POST['password2']!="")
                 {
-                    authentication();
+                    $email=$_POST['email'];
+                    $username=$_POST['username'];
+                    $password=$_POST['password'];
+                    $password2=$_POST['password2'];
+                    $radio=$_POST['radio'];
+                    $register = $user->register($email, $username,$password, $password2, $radio);
                 }
             else echo "<p>All fields are required</p>";
         }
