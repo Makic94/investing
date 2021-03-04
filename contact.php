@@ -59,7 +59,7 @@ if(!$db->connect())exit();
                             $txt="You have recieved an email from ".$clean_name.".\n\n".$clean_message;
                             if(!@mail($mailTo,$clean_subject,$txt,$headers))
                                 {
-                                    echo "<p>There was an error while sending the message, please try again.</p>";
+                                    echo "<p>There is an error on our servers, please try again later.</p>";
                                 }
                             else echo "<p>Email sent. Our team will respond in 2 to 3 working days!</p>";
                         }
