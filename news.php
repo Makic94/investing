@@ -112,7 +112,9 @@ if(isset($_GET['id']))
     {
     if($_GET['id']!=0)
         {
-            $upit="SELECT * FROM vnews WHERE deleted=0 and id=".$_GET['id'];
+            $id=$_GET['id'];
+            setcookie("id",$id,time()+3600,"/"); //created a cookie to transfer the id for comments
+            $upit="SELECT * FROM vnews WHERE deleted=0 and id=$id";
             $rez=$db->query($upit);
                     while($red=$db->fetch_object($rez))
                     {
@@ -127,10 +129,54 @@ if(isset($_GET['id']))
                             }
                         echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
                         echo "</div>";
-                    }
-        }
+                    } ?>
+                    <br>
+                    <form action="news.php" method="post">
+                    <textarea name="comment" id="coment" cols="30" rows="10" placeholder="Your comment"></textarea><br><br>
+                    <button>Submit</button>
+                    </form>
+    <?php    }
     else echo "<p>Unable to find the given news id.<p>";
     }
+    if(isset($_POST['comment']))
+                {
+                    if($_POST['comment']!="")
+                        {
+                            if(isset($_SESSION['username']) and isset($_SESSION['status']) and isset($_SESSION['id']))
+                            {
+                                if($_SESSION['status']!='owner')
+                                    {
+                                        $comment=$_POST['comment'];
+                                        $comment=filter_var($comment, FILTER_SANITIZE_STRING);
+                                        if($comment!="")
+                                            {   
+                                                $id=$_COOKIE['id'];
+                                                $upit="INSERT INTO comments (news_id,comment,deleted) VALUES ($id,'$comment',1)";
+                                                $rez=$db->query($upit);
+                                                setcookie("id","",time()-60,"/");
+                                                echo "<p>You have added a new comment.</p>";
+                                            }
+                                        else echo "<p>Invalid comment.Please try again.</p>";
+                                    }
+                                else
+                                    {
+                                        $comment=$_POST['comment'];
+                                        $comment=filter_var($comment, FILTER_SANITIZE_STRING);
+                                        if($comment!="")
+                                            {
+                                                $id=$_COOKIE['id'];
+                                                $upit="INSERT INTO comments (news_id,comment) VALUES ($id,'$comment')";
+                                                $rez=$db->query($upit);
+                                                setcookie("id","",time()-60,"/");
+                                                echo "<p>You have added a new comment.</p>";
+                                            }
+                                        else echo "<p>Invalid comment.Please try again.</p>";
+                                    }
+                            }
+                            else echo "<p>To post a comment you will have to <a href='register.php'>Register</a> or <a href='login.php'>Login</a> first!</p>";
+                        }
+                    else echo "<p>Sending blank space is not allowed. Type the comment first before you send it.</p>";
+                }
     ?>
     <?php
     unset($db);
