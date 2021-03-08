@@ -1,8 +1,7 @@
 <?php
+include_once("class/classUser.php");
+$user = new User();
 session_start();
-require_once("class/classBase.php");
-$db=new Base();
-if(!$db->connect())exit();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,11 +52,28 @@ if(!$db->connect())exit();
     <?php
         }
     ?>
+    <h2>Edit your Profile</h2>
+    <p>You can change your username down bellow!</p>
+    <p>Your current username is <?php echo $_SESSION['username']."."; ?></p>
+    <form action="profile.php" method="POST">
+    <input type="text" name="username" placeholder="Username"><br><br>
+    <button>Change</button>
+    </form>
+    <?php
+    if(isset($_POST['username']))
+        {
+            if($_POST['username']!="")
+                {
+                    $username=$_POST['username'];
+                    $namechange = $user->username($username);
+                }
+            else echo "<p>All fields are required</p>";
+        }
+    ?>
     <?php
     }
     else header('Location: register.php');
     ?>
-    <h2>Edit your Profile</h2>
     <?php
     unset($db);
     ?>

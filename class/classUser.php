@@ -186,5 +186,27 @@ public function login($email,$password)
                 } 
                 else echo "<p>Email is not valid.</p>";
 }
+public function username($username){
+    $username=filter_var($username, FILTER_SANITIZE_STRING);
+    $username=strtolower($username);
+    if($username!="")
+        {
+            $db=new Base();
+            if(!$db->connect())exit();
+            $upit="SELECT username FROM users where username='$username'";
+            $rez=$db->query($upit);
+            $rows=$db->num_rows($rez);
+            if($rows==0)
+                {
+                    $id=$_SESSION['id'];
+                    $upit="UPDATE users SET username='$username' WHERE id=$id";
+                    var_dump($upit);
+                    $rez=$db->query($upit);
+                    var_dump($rez);
+                    echo "<p>You have succesfully changed your username! Your username now is $username.</p>";
+                }
+            else echo "<p>This username already exists. Please try another username.</p>";
+        }
+}
 }
 ?>
