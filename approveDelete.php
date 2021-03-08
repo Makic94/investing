@@ -53,9 +53,11 @@ if(!$db->connect())exit();
                     $rez=$db->query($upit);
                     while($red=$db->fetch_object($rez))
                     {
+                        $tmp=explode(" ",$red->text);
+                        $novi=array_slice($tmp, 0, 15);
                         echo "<div style='border: 1px solid black; width:300px'>";
                         echo "<h3><a href='approveDelete.php?id=".$red->id."'>".$red->title."</a></h3>";
-                        echo "<p>".$red->text."</p>";
+                        echo "<p>".implode(" ",$novi)."...</p>";
                         $upit2="SELECT * FROM images WHERE newsid=$red->id";
                         $rez2=$db->query($upit2);
                         while($red2=$db->fetch_object($rez2))
