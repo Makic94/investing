@@ -58,6 +58,24 @@ if(!$db->connect())exit();
                         $rez=$db->query($upit);
                         while($red=$db->fetch_object($rez))
                         {
+                            if(strlen($red->text)>20)
+                            {
+                                $newtext=substr($red->text,0,25);
+                                echo "<div style='border: 1px solid black; width:300px'>";
+                                echo "<h3><a href='approveDelete.php?id=".$red->id."&button=select'>".$red->title."</a></h3>";
+                                echo "<p>$newtext...</p>";
+                                $upit2="SELECT * FROM images WHERE newsid=$red->id";
+                                $rez2=$db->query($upit2);
+                                while($red2=$db->fetch_object($rez2))
+                                    {
+                                        echo "<img src={$red2->path} width='100' height='100'>";
+                                    }
+                                echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
+                                echo "</div>";
+                                echo "<p></p>";
+                            }
+                            else
+                            {
                             $tmp=explode(" ",$red->text);
                             $novi=array_slice($tmp, 0, 15);
                             echo "<div style='border: 1px solid black; width:300px'>";
@@ -72,6 +90,7 @@ if(!$db->connect())exit();
                             echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
                             echo "</div>";
                             echo "<p></p>";
+                            }
                         }
 
                     }
@@ -87,21 +106,45 @@ if(!$db->connect())exit();
                         $rez=$db->query($upit);
                                 while($red=$db->fetch_object($rez))
                                 {
-                                    echo "<div style='border: 1px solid black; width:400px'>";
-                                    echo "<h3><a href='approveDelete.php?id=".$red->id."&button=select'>".$red->title."</a></h3>";
-                                    echo "<p>".$red->text."</p>";
-                                    $upit2="SELECT * FROM images WHERE newsid=$red->id";
-                                    $rez2=$db->query($upit2);
-                                    while($red2=$db->fetch_object($rez2))
+                                    if(strlen($red->text)>20)
+                                    {
+                                        $newtext=$red->text;
+                                        $newtext=chunk_split($newtext, 25);
+                                        echo "<div style='border: 1px solid black; width:400px'>";
+                                        echo "<h3><a href='approveDelete.php?id=".$red->id."&button=select'>".$red->title."</a></h3>";
+                                        echo "<p>$newtext</p>";
+                                        $upit2="SELECT * FROM images WHERE newsid=$red->id";
+                                        $rez2=$db->query($upit2);
+                                        while($red2=$db->fetch_object($rez2))
+                                            {
+                                                $id=$red2->id;
+                                                $path=$red2->path;
+                                                setcookie("path",$path,time()+3600,"/");  //cookie created to delete the image from tmpuserimages folder or to move it to the servers folder
+                                                setcookie("img",$id,time()+3600,"/"); //cookie created to transfer the image ID for the sql command (delete)
+                                                echo "<img src={$red2->path} width='380' height='250'>";
+                                            }
+                                        echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
+                                        echo "</div>";
+                                    }
+                                    else
                                         {
-                                            $id=$red2->id;
-                                            $path=$red2->path;
-                                            setcookie("path",$path,time()+3600,"/");  //cookie created to delete the image from tmpuserimages folder or to move it to the servers folder
-                                            setcookie("img",$id,time()+3600,"/"); //cookie created to transfer the image ID for the sql command (delete)
-                                            echo "<img src={$red2->path} width='380' height='250'>";
+                                            echo "<div style='border: 1px solid black; width:400px'>";
+                                            echo "<h3><a href='approveDelete.php?id=".$red->id."&button=select'>".$red->title."</a></h3>";
+                                            echo "<p>".$red->text."</p>";
+                                            $upit2="SELECT * FROM images WHERE newsid=$red->id";
+                                            $rez2=$db->query($upit2);
+                                            while($red2=$db->fetch_object($rez2))
+                                                {
+                                                    $id=$red2->id;
+                                                    $path=$red2->path;
+                                                    setcookie("path",$path,time()+3600,"/");  //cookie created to delete the image from tmpuserimages folder or to move it to the servers folder
+                                                    setcookie("img",$id,time()+3600,"/"); //cookie created to transfer the image ID for the sql command (delete)
+                                                    echo "<img src={$red2->path} width='380' height='250'>";
+                                                }
+                                            echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
+                                            echo "</div>";
                                         }
-                                    echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
-                                    echo "</div>";
+                                    
                                 }
                         } ?>
                                 <form action="approveDelete.php" method="GET">
