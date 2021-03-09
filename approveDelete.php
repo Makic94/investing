@@ -42,74 +42,80 @@ if(!$db->connect())exit();
     }
     ?>
     </select><br><br>
-    <button>Select</button>
+    <button name="button" value="select">Select</button>
     <?php
-        if(isset($_GET['category']))
+        if(isset($_REQUEST['button']))
             {
-                if($_GET['category']!=0)
+                switch($_REQUEST['button'])
+            {
+                case 'select':
+                if(isset($_GET['category']) and isset($_REQUEST['button']))
                 {
-                    $category=$_GET['category'];
-                    $upit="SELECT * FROM vnews WHERE deleted=1 and category='$category' ORDER BY time DESC";
-                    $rez=$db->query($upit);
-                    while($red=$db->fetch_object($rez))
+                    if($_GET['category']!=0 and $_REQUEST['button']=='select')
                     {
-                        $tmp=explode(" ",$red->text);
-                        $novi=array_slice($tmp, 0, 15);
-                        echo "<div style='border: 1px solid black; width:300px'>";
-                        echo "<h3><a href='approveDelete.php?id=".$red->id."'>".$red->title."</a></h3>";
-                        echo "<p>".implode(" ",$novi)."...</p>";
-                        $upit2="SELECT * FROM images WHERE newsid=$red->id";
-                        $rez2=$db->query($upit2);
-                        while($red2=$db->fetch_object($rez2))
-                            {
-                                echo "<img src={$red2->path} width='100' height='100'>";
-                            }
-                        echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
-                        echo "</div>";
-                        echo "<p></p>";
-                    }
+                        $category=$_GET['category'];
+                        $upit="SELECT * FROM vnews WHERE deleted=1 and category='$category' ORDER BY time DESC";
+                        $rez=$db->query($upit);
+                        while($red=$db->fetch_object($rez))
+                        {
+                            $tmp=explode(" ",$red->text);
+                            $novi=array_slice($tmp, 0, 15);
+                            echo "<div style='border: 1px solid black; width:300px'>";
+                            echo "<h3><a href='approveDelete.php?id=".$red->id."&button=select'>".$red->title."</a></h3>";
+                            echo "<p>".implode(" ",$novi)."...</p>";
+                            $upit2="SELECT * FROM images WHERE newsid=$red->id";
+                            $rez2=$db->query($upit2);
+                            while($red2=$db->fetch_object($rez2))
+                                {
+                                    echo "<img src={$red2->path} width='100' height='100'>";
+                                }
+                            echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
+                            echo "</div>";
+                            echo "<p></p>";
+                        }
 
+                    }
+                    else echo "<p>You must select a category to view the news.</p>"; 
                 }
-               // else { echo "<p>You must select a category to view the news.</p>"; }
-            }
-            if(isset($_GET['id']))
-            {
-            if($_GET['id']!=0)
+                if(isset($_GET['id']) and isset($_REQUEST['button']))
                 {
-                    $id=$_GET['id'];
-                    setcookie("id",$id,time()+3600,"/"); //cookie created to transfer the news ID for the sql command (update/delete)
-                    $upit="SELECT * FROM vnews WHERE deleted=1 and id=".$_GET['id'];
-                    $rez=$db->query($upit);
-                            while($red=$db->fetch_object($rez))
-                            {
-                                echo "<div style='border: 1px solid black; width:400px'>";
-                                echo "<h3><a href='approveDelete.php?id=".$red->id."'>".$red->title."</a></h3>";
-                                echo "<p>".$red->text."</p>";
-                                $upit2="SELECT * FROM images WHERE newsid=$red->id";
-                                $rez2=$db->query($upit2);
-                                while($red2=$db->fetch_object($rez2))
-                                    {
-                                        $id=$red2->id;
-                                        $path=$red2->path;
-                                        setcookie("path",$path,time()+3600,"/");  //cookie created to delete the image from tmpuserimages folder or to move it to the servers folder
-                                        setcookie("img",$id,time()+3600,"/"); //cookie created to transfer the image ID for the sql command (delete)
-                                        echo "<img src={$red2->path} width='380' height='250'>";
-                                    }
-                                echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
-                                echo "</div>";
-                            } ?>
+                if($_GET['id']!=0 and $_REQUEST['button']=='select')
+                    {
+                        $id=$_GET['id'];
+                        setcookie("id",$id,time()+3600,"/"); //cookie created to transfer the news ID for the sql command (update/delete)
+                        $upit="SELECT * FROM vnews WHERE deleted=1 and id=".$_GET['id'];
+                        $rez=$db->query($upit);
+                                while($red=$db->fetch_object($rez))
+                                {
+                                    echo "<div style='border: 1px solid black; width:400px'>";
+                                    echo "<h3><a href='approveDelete.php?id=".$red->id."&button=select'>".$red->title."</a></h3>";
+                                    echo "<p>".$red->text."</p>";
+                                    $upit2="SELECT * FROM images WHERE newsid=$red->id";
+                                    $rez2=$db->query($upit2);
+                                    while($red2=$db->fetch_object($rez2))
+                                        {
+                                            $id=$red2->id;
+                                            $path=$red2->path;
+                                            setcookie("path",$path,time()+3600,"/");  //cookie created to delete the image from tmpuserimages folder or to move it to the servers folder
+                                            setcookie("img",$id,time()+3600,"/"); //cookie created to transfer the image ID for the sql command (delete)
+                                            echo "<img src={$red2->path} width='380' height='250'>";
+                                        }
+                                    echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
+                                    echo "</div>";
+                                }
+                        } ?>
                                 <form action="approveDelete.php" method="GET">
                                 <input type="radio" id="radio" name="radio" value="approve" checked>
                                 <label for="huey">Approve</label><br>
                                 <input type="radio" id="radio" name="radio" value="delete">
                                 <label for="huey">Delete</label><br><br>
-                                <button>Submit</button>
+                                <button name="button" value="submit">Submit</button>
                                 </form>
                             <?php
                 }
-            else echo "<p>Unable to find the given news id.<p>";
-            }
-            if(isset($_GET['radio']))
+                break;
+                case'submit':
+                   if(isset($_GET['radio']))
                 {
                     if($_GET['radio']=='approve')
                         {
@@ -143,7 +149,11 @@ if(!$db->connect())exit();
                             setcookie("id","",time()-60,"/");
                             echo "<p>Selected news are successfully deleted!</p>";
                         }
-                }
+                } 
+                break;
+            } 
+
+        }
     ?>
     <?php
     }
