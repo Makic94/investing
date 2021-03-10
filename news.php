@@ -25,7 +25,7 @@ if(!$db->connect())exit();
     <li><a href="info.php">Info</a></li>
     <li><a href="news.php">News</a></li>
     <li><a href="profile.php">Profile</a></li>
-    <li><a href="support.php">Support</a></li>
+    <li><a href="contact.php">Contact Us!</a></li>
     <li><a href="post.php">Create a Topic</a></li>
     <li><a href="logout.php">Logout</a></li>
     </ul>
@@ -41,7 +41,6 @@ if(!$db->connect())exit();
     <li><a href="info.php">Info</a></li>
     <li><a href="news.php">News</a></li>
     <li><a href="profile.php">Profile</a></li>
-    <li><a href="users.php">Users</a></li>
     <li><a href="post.php">Create a Topic</a></li>
     <li><a href="approveDelete.php">Approve or Delete a Topic</a></li>
     <li><a href="logout.php">Logout</a></li>
@@ -129,8 +128,42 @@ if(isset($_GET['id']))
                             }
                         echo "<p>Author: ".$red->username.". Created: <i>".$red->time."</i></p>";
                         echo "</div>";
-                    } ?>
-                    <br>
+                    }
+                    echo "<hr>";
+                    echo "<p>Comment section:</p>";
+                    $upit="SELECT * FROM comments WHERE news_id=$id";
+                    $rez=$db->query($upit);
+                    while($red=$db->fetch_object($rez))
+                        {
+                            $commentID=$red->id;
+                            $id=$red->user_id;
+                            //var_dump($id);
+                            //var_dump($commentID);
+                            $upit2="SELECT username FROM users WHERE id=$id";
+                            $rez2=$db->query($upit2);
+                            while($red2=$db->fetch_object($rez2))
+                            {
+                            echo "<div style='border: 1px solid black; width:250px'>";
+                            echo "<p>Posted by: <b>".$red2->username."</b></p>";
+                            }
+                            echo "<p>".$red->comment."</p>";
+                            echo "<i>".$red->time."</i>";
+                            echo "</div>"; ?>
+                            <?php
+                            if(isset($_SESSION['id']))
+                                { if($_SESSION['id']==$id)
+                                    {
+                            ?>
+                            <form action="news.php?button=delete" method="GET">
+                            <button name="button" value="delete">Delete</button>
+                            </form>
+                            <br>
+                        <?php       }
+                                }
+                            echo "<br>";
+                        }
+                     ?>
+                    <p>Write a comment:</p>
                     <form action="news.php" method="post">
                     <textarea name="comment" id="coment" cols="30" rows="10" placeholder="Your comment"></textarea><br><br>
                     <button>Submit</button>
@@ -138,40 +171,39 @@ if(isset($_GET['id']))
     <?php    }
     else echo "<p>Unable to find the given news id.<p>";
     }
+    if(isset($_REQUEST['button']))
+        {
+            switch($_REQUEST['button'])
+            {
+            case 'delete':
+                if($_REQUEST['button']=='delete')
+                    {
+                        $upit="DELETE FROM comments WHERE user_id=".$_SESSION['id'];
+                        var_dump($upit);
+                        $rez=$db->query($upit);
+                        echo "Comment deleted.";
+                    }
+            break;
+            }
+        }
     if(isset($_POST['comment']))
                 {
                     if($_POST['comment']!="")
                         {
                             if(isset($_SESSION['username']) and isset($_SESSION['status']) and isset($_SESSION['id']))
                             {
-                                if($_SESSION['status']!='owner')
-                                    {
-                                        $comment=$_POST['comment'];
-                                        $comment=filter_var($comment, FILTER_SANITIZE_STRING);
-                                        if($comment!="")
-                                            {   
-                                                $id=$_COOKIE['id'];
-                                                $upit="INSERT INTO comments (news_id,comment,deleted) VALUES ($id,'$comment',1)";
-                                                $rez=$db->query($upit);
-                                                setcookie("id","",time()-60,"/");
-                                                echo "<p>You have added a new comment.</p>";
-                                            }
-                                        else echo "<p>Invalid comment.Please try again.</p>";
-                                    }
-                                else
-                                    {
-                                        $comment=$_POST['comment'];
+                                  $comment=$_POST['comment'];
                                         $comment=filter_var($comment, FILTER_SANITIZE_STRING);
                                         if($comment!="")
                                             {
                                                 $id=$_COOKIE['id'];
-                                                $upit="INSERT INTO comments (news_id,comment) VALUES ($id,'$comment')";
+                                                $userID=$_SESSION['id'];
+                                                $upit="INSERT INTO comments (news_id,user_id,comment) VALUES ($id,$userID,'$comment')";
                                                 $rez=$db->query($upit);
                                                 setcookie("id","",time()-60,"/");
                                                 echo "<p>You have added a new comment.</p>";
                                             }
                                         else echo "<p>Invalid comment.Please try again.</p>";
-                                    }
                             }
                             else echo "<p>To post a comment you will have to <a href='register.php'>Register</a> or <a href='login.php'>Login</a> first!</p>";
                         }

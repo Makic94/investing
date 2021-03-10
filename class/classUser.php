@@ -51,6 +51,7 @@ public function register($email, $username, $password, $password2, $radio)
                                                                                                         $_SESSION['id']=$red['id'];
                                                                                                         $_SESSION['username']=$red['username'];
                                                                                                         $_SESSION['status']=$red['status'];
+                                                                                                        $_SESSION['email']=$red['email'];
                                                                                                         header('Location: index.php');
                                                                                                         }
                                                                                                     }
@@ -68,6 +69,7 @@ public function register($email, $username, $password, $password2, $radio)
                                                                                                         $_SESSION['id']=$red['id'];
                                                                                                         $_SESSION['username']=$red['username'];
                                                                                                         $_SESSION['status']=$red['status'];
+                                                                                                        $_SESSION['email']=$red['email'];
                                                                                                         header('Location: index.php');
                                                                                                         }
                                                                                                     }
@@ -90,7 +92,8 @@ public function register($email, $username, $password, $password2, $radio)
                                                                                             {
                                                                                             $_SESSION['id']=$red['id'];
                                                                                             $_SESSION['username']=$red['username'];
-                                                                                            $_SESSION['status']=$red->status;
+                                                                                            $_SESSION['status']=$red['status'];
+                                                                                            $_SESSION['email']=$red['email'];
                                                                                             header('Location: index.php');  
                                                                                             }
                                                                                         }
@@ -104,7 +107,8 @@ public function register($email, $username, $password, $password2, $radio)
                                                                                             {
                                                                                             $_SESSION['id']=$red['id'];
                                                                                             $_SESSION['username']=$red['username'];
-                                                                                            $_SESSION['status']=$red->status;
+                                                                                            $_SESSION['status']=$red['status'];
+                                                                                            $_SESSION['email']=$red['email'];
                                                                                             header('Location: index.php');  
                                                                                             }
                                                                                         }

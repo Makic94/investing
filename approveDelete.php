@@ -24,7 +24,6 @@ if(!$db->connect())exit();
     <li><a href="info.php">Info</a></li>
     <li><a href="news.php">News</a></li>
     <li><a href="profile.php">Profile</a></li>
-    <li><a href="users.php">Users</a></li>
     <li><a href="post.php">Create a Topic</a></li>
     <li><a href="approveDelete.php">Approve or Delete a Topic</a></li>
     <li><a href="logout.php">Logout</a></li>
