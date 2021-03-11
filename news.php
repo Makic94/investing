@@ -139,23 +139,22 @@ if(isset($_GET['id']))
                             $id=$red->user_id;
                             //var_dump($id);
                             //var_dump($commentID);
-                            $upit2="SELECT username FROM users WHERE id=$id";
+                            $upit2="SELECT username, id FROM users WHERE id=$id";
                             $rez2=$db->query($upit2);
-                            while($red2=$db->fetch_object($rez2))
-                            {
+                            $red2=$db->fetch_object($rez2);
                             echo "<div style='border: 1px solid black; width:250px'>";
                             echo "<p>Posted by: <b>".$red2->username."</b></p>";
-                            }
                             echo "<p>".$red->comment."</p>";
                             echo "<i>".$red->time."</i>";
                             echo "</div>"; ?>
                             <?php
                             if(isset($_SESSION['id']))
-                                { if($_SESSION['id']==$id)
+                                { if($_SESSION['id']==$red2->id)
                                     {
                             ?>
                             <form action="news.php?button=delete" method="GET">
                             <button name="button" value="delete">Delete</button>
+                            <input name="comment_id" value="<?php echo $red->id ?>" hidden>
                             </form>
                             <br>
                         <?php       }
@@ -178,8 +177,8 @@ if(isset($_GET['id']))
             case 'delete':
                 if($_REQUEST['button']=='delete')
                     {
-                        $upit="DELETE FROM comments WHERE user_id=".$_SESSION['id'];
-                        var_dump($upit);
+                        $upit="DELETE FROM comments WHERE id=".$_GET['comment_id'];
+                        //var_dump($upit);
                         $rez=$db->query($upit);
                         echo "Comment deleted.";
                     }
